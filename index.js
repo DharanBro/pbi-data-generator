@@ -17,8 +17,8 @@ const products = [
     "Product 10",
 ]
 
-const neededRows = 100000
-function getRandomArbitrary(min, max) {
+const neededRows = 10000
+function getRandomArbitrary(min=10000, max=50000) {
     return Math.random() * (max - min) + min;
 }
 
@@ -53,14 +53,41 @@ async function readCsv() {
     let length;
     let repeatTimes = 1;
     let finalArray = []
+
+
     if (frequency < 1) {
+
+        
         console.log('delete ' + (1 / frequency) + ' rows for each row ')
         repeater = parseInt(1 / frequency)
         length = transformedData.length;
+
+        let monthsRepeater = Math.floor((transformedData.length / repeater) / 12)
+        let productsRepeater = Math.floor((transformedData.length / repeater) / 10)
+        console.log("monthsRepeater",monthsRepeater)
+        console.log("productsRepeater",productsRepeater)
+
+        let monthIteration  = 0,productIteration = 0
+
         for (let i = 0; i < length; i += repeater) {
-            finalArray.push(transformedData[i])
+            let product = products[productIteration]
+            let month = periods[monthIteration]
+            if(i >= monthsRepeater){
+                monthIteration += 1
+            }
+            if(i >= productsRepeater){
+                productIteration += 1;
+
+            }
+
+            finalArray.push([product,month,...transformedData[i],getRandomArbitrary()])
         }
-    } else {
+    } 
+    
+    
+    
+    
+    else {
         console.log('repeat ' + frequency + ' times')
         length = (neededRows) * parseInt(frequency)
         repeatTimes = parseInt(frequency)
@@ -80,6 +107,7 @@ async function readCsv() {
 
         })
     }
+    finalArray.unshift(['product', 'months', 'country', 'sub country', 'area', 'value'])
     console.log(finalArray.length)
 
 

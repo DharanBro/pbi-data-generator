@@ -17,57 +17,61 @@ const products = [
     "Product 10",
 ]
 let finalArray = []
-function getRandomArbitrary(min, max) {
+function getRandomArbitrary(min = 10000, max = 50000) {
     return Math.random() * (max - min) + min;
 }
-async function loadJson() {
-    const rawData = await readFile('./countries+states+cities.json', { encoding: "UTF-8" })
+async function loadJson(path) {
+    const rawData = await readFile(path, { encoding: "UTF-8" })
     return JSON.parse(rawData)
 }
 async function readCsv() {
-    const parsedData = await loadJson()
-    const countries = parsedData.map((inp)=>(inp.name))
-    const states = parsedData.map((inp)=>{
-        try{
-            Object.keys(inp.states)
-            return Object.keys(inp.states)
-        }catch(err){}
-    
-    })
-console.log(states)
-    // console.log(parsedData.length)
-    const columns = [2, 10, 25, 50,100]
+    const parsedCountries = await loadJson('./countries.json')
+    const countries = parsedCountries.map((inp) => (inp.name))
+    const parsedStates = await loadJson('./states.json') 
+    const states = parsedStates.map((inp) => (inp.name))
+    const parsedCities =  await loadJson('./cities.json')
+    const cities = parsedCities.map((inp) => (inp.name))
+    const columns = [2, 10, 80, 160, 380]
     const max = Math.max(...columns)
 
 
-    let columnRepeater = [0, 0, 0, 0]
-    let columnIteration = [50, 10, 4, 2,1]
-    columnIteration = columns.map((column)=>(max/column))
+    let columnRepeater = [0, 0, 0, 0, 0]
+    let columnIteration = columns.map((column) => (Math.ceil(max / column)))
+    console.log(columnIteration)
 
     for (let i = 0; i < max; i++) {
         columns.forEach((column, index) => {
             // if (i > (columnIteration[index] * columnX[index])) {
             if ((i % columnIteration[index]) === 0 && i != 0) {
-
                 columnRepeater[index] += 1;
                 // columnIteration[index] = 0;
                 // if (columnIteration[index] == 0) {
                 //     columnIteration[index] += 1;
                 // }
-                // if (column === 2) {
-                //     console.log(`${column} is changed with index ${columnIteration[index]} and repeater ${columnRepeater[index]}`)
-                // }
+             
             }
+
         })
-        console.log(
-            i,
-            {
-                product: products[columnRepeater[0]],
-                periods: periods[columnRepeater[1]],
-                countries: countries[columnRepeater[2]],
-                states: states[columnRepeater[3]],
-            }
-        )
+
+        // console.log(
+        //     i,
+        //     {
+        //         product: products[columnRepeater[0]],
+        //         periods: periods[columnRepeater[1]],
+        //         countries: countries[columnRepeater[2]],
+        //         states: states[columnRepeater[3]],
+        //         // cities: cities[columnRepeater[4]],
+        //         value: getRandomArbitrary()
+        //     }
+        // )
+        finalArray.push([
+            products[columnRepeater[0]],
+            periods[columnRepeater[1]],
+            countries[columnRepeater[2]],
+            states[columnRepeater[3]],
+            cities[columnRepeater[4]],
+            getRandomArbitrary()
+        ])
     }
 
 
@@ -76,7 +80,7 @@ console.log(states)
 
     const newcsvData = finalArray.map(row => row.join(",")).join("\n");
 
-    await writeFile('world-cities-products.csv', newcsvData)
+    await writeFile('columnRespective.csv', newcsvData)
 }
 
 readCsv();
