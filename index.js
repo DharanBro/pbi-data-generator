@@ -17,8 +17,8 @@ const products = [
     "Product 10",
 ]
 
-const neededRows = 10000
-function getRandomArbitrary(min=10000, max=50000) {
+const neededRows = 30000
+function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
 
@@ -46,7 +46,6 @@ async function readCsv() {
 
     const data = await readFile('world-cities_csv.csv', { encoding: "UTF-8" });
     const transformedData = data.split('\r\n').map(row => row.split(","))
-
 
     const frequency = (neededRows) / transformedData.length;
     let repeater = 1;
@@ -92,16 +91,21 @@ async function readCsv() {
         length = (neededRows) * parseInt(frequency)
         repeatTimes = parseInt(frequency)
         products.length = repeatTimes;
-        
+
         let monthsRepeater = (repeatTimes * transformedData.length) / 12
-        let monthIteration  = 1
+
+        console.log(monthsRepeater)
+        let monthIteration = 0;
+        let monthCount = 0
+
         products.forEach((product) => {
-            let month = periods[monthIteration]
             transformedData.forEach((transformedData) => {
-                finalArray.push([product,month, ...transformedData,getRandomArbitrary(10000, 50000)])
-                monthIteration +=1
-                if(monthIteration >= monthsRepeater){
-                    monthIteration = 1
+                let month = periods[monthIteration]
+                finalArray.push([product, month, ...transformedData, getRandomArbitrary(10000, 50000)])
+                monthCount += 1
+                if (monthCount >= monthsRepeater) {
+                    monthIteration += 1
+                    monthCount = 0
                 }
             })
 
@@ -123,3 +127,4 @@ async function readCsv() {
 }
 
 readCsv();
+
